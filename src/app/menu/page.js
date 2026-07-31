@@ -910,14 +910,7 @@ export default function MenuPage() {
       <div className={styles.main}>
         <div className={styles.menuList}>
           {/* Dish cards */}
-          {(menuLoading || dateLoading) && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 0 32px", gap: 16 }}>
-              <LogoLoader />
-              <p style={{ opacity: 0.5, fontSize: 13, letterSpacing: "0.04em", marginTop: 8 }}>
-                {menuLoading ? "Please wait menu is loading" : "Loading…"}
-              </p>
-            </div>
-          )}
+          {(menuLoading || dateLoading) && <LogoLoader />}
           {!menuLoading && !menuDays[selectedDay]?.dishes?.length && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "56px 0", gap: 12, opacity: 0.45 }}>
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>

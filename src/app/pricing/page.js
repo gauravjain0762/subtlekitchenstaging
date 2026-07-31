@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
+import LogoLoader from "../components/LogoLoader";
 import { api } from "../lib/api";
 import styles from "./page.module.css";
 
@@ -29,11 +30,8 @@ export default function PricingPage() {
 
   if (loading) {
     return (
-      <div className={styles.root}>
-        <Navbar onSignIn={() => setAuthOpen(true)} />
-        <div className={styles.page} style={{ textAlign: "center", minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <p>Loading plans...</p>
-        </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "linear-gradient(135deg, #fef9e7 0%, #fef3c7 100%)" }}>
+        <img src="/logo.png" alt="Loading" style={{ width: "120px", height: "120px", objectFit: "contain" }} />
       </div>
     );
   }
