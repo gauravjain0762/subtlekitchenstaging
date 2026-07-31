@@ -85,11 +85,11 @@ export default function PricingPage() {
 
 
                 <div className={styles.planDetails}>
-                  {plan.type === "weekly" && plan.deliveryDays && (
+                  {plan.type === "weekly" && (
                     <div className={styles.deliveryDays}>
                       <p className={styles.detailLabel}>Delivery Days:</p>
                       <div className={styles.daysList}>
-                        {plan.deliveryDays.map(day => (
+                        {(plan.deliveryDays || ["Mon", "Tue", "Wed", "Thu", "Fri"]).map(day => (
                           <span key={day} className={styles.dayBadge}>{day}</span>
                         ))}
                       </div>
