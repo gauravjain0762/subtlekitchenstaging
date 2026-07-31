@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import styles from "./page.module.css";
 import Navbar from "../components/Navbar";
 import AuthPanel from "../components/AuthPanel";
-import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
+import LogoLoader from "../components/LogoLoader";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
 
@@ -184,7 +184,6 @@ function ConfirmationPageInner() {
         <div className={styles.leftPanel}>
           <div className={styles.deliveryInfo}>
 
-            <DeliveryVanAnimation />
 
             <p className={styles.sectionTitle} style={{ marginTop: 0 }}>Preferred delivery address</p>
             <div className={styles.deliveryAddrCard}>

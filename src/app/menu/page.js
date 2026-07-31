@@ -8,7 +8,7 @@ import AuthPanel from "../components/AuthPanel";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
-import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
+import LogoLoader from "../components/LogoLoader";
 
 const COMPANY = "ACME2024";
 const LUNCH_TIMES = ["11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM"];
@@ -912,7 +912,7 @@ export default function MenuPage() {
           {/* Dish cards */}
           {(menuLoading || dateLoading) && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "48px 0 32px", gap: 16 }}>
-              <DeliveryVanAnimation />
+              <LogoLoader />
               <p style={{ opacity: 0.5, fontSize: 13, letterSpacing: "0.04em", marginTop: 8 }}>
                 {menuLoading ? "Please wait menu is loading" : "Loading…"}
               </p>

@@ -7,7 +7,7 @@ import AuthPanel from "../components/AuthPanel";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../lib/api";
-import DeliveryVanAnimation from "../components/DeliveryVanAnimation";
+import LogoLoader from "../components/LogoLoader";
 
 
 function formatCouponHeadline(c) {
@@ -362,7 +362,6 @@ export default function ReviewPage() {
         {/* ── Left: delivery info ── */}
         <div className={styles.addrPanel}>
           <div className={styles.deliveryInfo}>
-            <DeliveryVanAnimation />
             <p className={styles.sectionTitle} style={{ marginTop: 0 }}>Delivery address</p>
 
             <div className={styles.deliveryAddrCard}>
