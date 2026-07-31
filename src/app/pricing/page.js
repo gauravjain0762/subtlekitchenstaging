@@ -15,6 +15,7 @@ export default function PricingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [authOpen, setAuthOpen] = useState(false);
+  const [selectedPatterns, setSelectedPatterns] = useState({});
 
   useEffect(() => {
     api.get("/api/subscriptions/available-plans")
@@ -100,12 +101,19 @@ export default function PricingPage() {
                     <div className={styles.patterns}>
                       <p className={styles.detailLabel}>Delivery Patterns:</p>
                       <div className={styles.patternsList}>
-                        {plan.patterns.map(pattern => (
-                          <div key={pattern.id} className={styles.patternItem}>
-                            <span className={styles.patternName}>{pattern.name}</span>
-                            <span className={styles.patternDays}>{pattern.days.join(", ")}</span>
-                          </div>
-                        ))}
+                        {plan.patterns.map(pattern => {
+                          const isSelected = selectedPatterns[plan._id] === pattern.id;
+                          return (
+                            <div
+                              key={pattern.id}
+                              className={`${styles.patternItem} ${isSelected ? styles.patternItemSelected : ""}`}
+                              onClick={() => setSelectedPatterns({ ...selectedPatterns, [plan._id]: pattern.id })}
+                            >
+                              <span className={styles.patternName}>{pattern.name}</span>
+                              <span className={styles.patternDays}>{pattern.days.join(", ")}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

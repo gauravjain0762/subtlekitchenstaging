@@ -176,12 +176,26 @@
 
 .patternItem {
   background: rgba(255,243,154,0.05);
-  border: 1px solid rgba(255,243,154,0.15);
+  border: 2px solid rgba(255,243,154,0.15);
   border-radius: 12px;
-  padding: 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+
+.patternItem:hover {
+  border-color: rgba(255,243,154,0.4);
+  background: rgba(255,243,154,0.1);
+  transform: translateY(-2px);
+}
+
+.patternItemSelected {
+  border-color: #fff39a;
+  background: rgba(255,243,154,0.15);
+  box-shadow: 0 0 16px rgba(255,243,154,0.2);
 }
 
 .patternName {
