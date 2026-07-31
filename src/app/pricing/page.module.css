@@ -195,7 +195,7 @@
 .patternItemSelected {
   border-color: #fff39a;
   background: rgba(255,243,154,0.15);
-  box-shadow: 0 0 16px rgba(255,243,154,0.2);
+  box-shadow: inset 0 0 12px rgba(255,243,154,0.2);
 }
 
 .patternName {
