@@ -1,6 +1,6 @@
 .root {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   font-family: 'Inter', sans-serif;
   display: flex;
   flex-direction: column;
@@ -30,15 +30,19 @@
 .heading {
   font-size: clamp(44px, 7vw, 64px);
   font-weight: 900;
-  color: #1a1a1a;
+  color: #fff;
   letter-spacing: -0.03em;
   line-height: 1.1;
   margin: 0 0 20px;
+  background: linear-gradient(135deg, #fff 0%, #fff39a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subheading {
   font-size: 17px;
-  color: rgba(26,26,26,0.7);
+  color: rgba(255,255,255,0.6);
   line-height: 1.7;
   max-width: 500px;
   margin: 0 auto;
@@ -53,8 +57,8 @@
 }
 
 .planCard {
-  background: #ffffff;
-  border: 2px solid #e8e8e8;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,243,154,0.03) 100%);
+  border: 1.5px solid rgba(255,243,154,0.15);
   border-radius: 20px;
   padding: 32px;
   display: flex;
@@ -62,7 +66,8 @@
   transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
 .planCard::before {
@@ -76,10 +81,10 @@
 }
 
 .planCard:hover {
-  border-color: #fff39a;
-  background: #fffdf0;
-  transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  border-color: rgba(255,243,154,0.4);
+  background: linear-gradient(135deg, rgba(255,243,154,0.12) 0%, rgba(255,243,154,0.06) 100%);
+  transform: translateY(-12px);
+  box-shadow: 0 32px 64px rgba(255,243,154,0.15);
 }
 
 .planHeader {
@@ -89,14 +94,14 @@
 .planName {
   font-size: 24px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: #fff;
   margin: 0 0 8px;
   letter-spacing: -0.02em;
 }
 
 .planDescription {
   font-size: 14px;
-  color: rgba(26,26,26,0.7);
+  color: rgba(255,255,255,0.6);
   margin: 0;
 }
 
@@ -170,34 +175,24 @@
 }
 
 .patternItem {
-  background: #f9f7f0;
-  border: 2px solid #e8e8e8;
+  background: rgba(255,243,154,0.05);
+  border: 1px solid rgba(255,243,154,0.15);
   border-radius: 12px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
-}
-
-.patternItem:hover {
-  border-color: #fff39a;
-  background: #fffdf0;
-  box-shadow: 0 4px 12px rgba(255,243,154,0.2);
-  transform: translateY(-2px);
+  gap: 4px;
 }
 
 .patternName {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #fff39a;
 }
 
 .patternDays {
-  font-size: 13px;
-  color: rgba(26,26,26,0.6);
-  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
 }
 
 .subscribeBtn {
