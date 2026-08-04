@@ -2029,7 +2029,7 @@
   }
   .dishDetailRight {
     flex: 1;
-    overflow-y: auto;
+    min-height: 0;
   }
 }
 .dishDetailTop {
@@ -2111,7 +2111,10 @@
 .dishDetailContent {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px 28px;
+  min-height: 0;
+  background: var(--white);
 }
 
 @media (max-width: 480px) {
