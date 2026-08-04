@@ -1966,6 +1966,13 @@
   box-shadow: 0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.06);
   animation: dishDetailIn 0.38s cubic-bezier(0.16,1,0.3,1) both;
 }
+
+@media (max-width: 768px) {
+  .dishDetailModal {
+    flex-direction: column;
+    max-height: 85vh;
+  }
+}
 @keyframes dishDetailIn {
   from { transform: scale(0.94) translateY(16px); opacity: 0; }
   to   { transform: scale(1) translateY(0); opacity: 1; }
@@ -2013,6 +2020,18 @@
   overflow: hidden;
   min-width: 0;
 }
+
+@media (max-width: 768px) {
+  .dishDetailLeft {
+    width: 100%;
+    height: 250px;
+    flex-shrink: 0;
+  }
+  .dishDetailRight {
+    flex: 1;
+    overflow-y: auto;
+  }
+}
 .dishDetailTop {
   display: flex;
   align-items: flex-start;
@@ -2036,6 +2055,18 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 480px) {
+  .dishDetailTop {
+    padding: 20px 44px 0 16px;
+  }
+  .dishDetailName {
+    font-size: 18px;
+  }
+  .dishDetailPrice {
+    font-size: 17px;
+  }
+}
+
 /* Tabs */
 .dishDetailTabs {
   display: flex;
@@ -2044,6 +2075,7 @@
   margin-top: 14px;
   gap: 0;
   flex-shrink: 0;
+  overflow-x: auto;
 }
 .dishDetailTab {
   padding: 10px 16px;
@@ -2057,6 +2089,7 @@
   cursor: pointer;
   font-family: 'Inter', sans-serif;
   transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
 }
 .dishDetailTab:hover { color: var(--black); }
 .dishDetailTabActive {
@@ -2064,11 +2097,27 @@
   border-bottom-color: var(--black);
 }
 
+@media (max-width: 480px) {
+  .dishDetailTabs {
+    padding: 0 16px;
+  }
+  .dishDetailTab {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+}
+
 /* Tab content */
 .dishDetailContent {
   flex: 1;
   overflow-y: auto;
   padding: 20px 28px;
+}
+
+@media (max-width: 480px) {
+  .dishDetailContent {
+    padding: 16px 16px;
+  }
 }
 .dishDetailDesc {
   font-size: 14px;
@@ -2124,6 +2173,12 @@
   border-top: 1.5px solid rgba(0,0,0,0.07);
   background: #fafaf8;
   flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .dishDetailAddonsSection {
+    padding: 12px 16px;
+  }
 }
 .dishDetailAddonsTitle {
   font-size: 11px;
@@ -2229,6 +2284,12 @@
   background: #fafaf8;
   flex-shrink: 0;
   flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .dishDetailPortionRow {
+    padding: 10px 16px;
+  }
 }
 .dishDetailPortionLabel {
   font-size: 11px;
