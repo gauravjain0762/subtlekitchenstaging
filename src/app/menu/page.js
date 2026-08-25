@@ -758,7 +758,12 @@ export default function MenuPage() {
 
   // Composite key helpers
   const getKey = (d, di) => `${d}_${di}`;
-  const isSelectedDish = (d, di) => !!selected[getKey(d, di)];
+  const isSelectedDish = (d, di) => {
+    if (selectedPlan !== "one-time") {
+      return weeklyMeals[selectedPlanDay]?.id === di;
+    }
+    return !!selected[getKey(d, di)];
+  };
   const getDefaultPortion = (d, di) => {
     const dishPortions = menuDays[d]?.dishes[di]?.portions;
     if (!dishPortions?.length) return "Regular";
