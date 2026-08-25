@@ -513,7 +513,10 @@ export default function MenuPage() {
   const [selectedPlan, setSelectedPlan] = useState("one-time");
   const [weeklyMeals, setWeeklyMeals] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
   const [weeklyQtys, setWeeklyQtys] = useState({ Mon: 1, Tue: 1, Wed: 1, Thu: 1, Fri: 1 });
+  const [weeklyPortions, setWeeklyPortions] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
+  const [weeklyAddons, setWeeklyAddons] = useState({ Mon: {}, Tue: {}, Wed: {}, Thu: {}, Fri: {} });
   const [showPlanModal, setShowPlanModal] = useState(false);
+  const [editingPlanDay, setEditingPlanDay] = useState(null);
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0;
@@ -1176,7 +1179,20 @@ export default function MenuPage() {
           <div className={styles.dishDetailOverlay} onClick={e => e.target === e.currentTarget && closeDetail()}>
             <div className={styles.dishDetailModal}>
               {/* Close button — top-right of whole modal */}
-              <button className={styles.dishDetailClose} onClick={closeDetail}>✕</button>
+              <button
+                className={styles.dishDetailClose}
+                onClick={() => {
+                  if (editingPlanDay) {
+                    setEditingPlanDay(null);
+                    setDetailTab('overview');
+                  } else {
+                    closeDetail();
+                  }
+                }}
+                title={editingPlanDay ? 'Back to plan' : 'Close'}
+              >
+                {editingPlanDay ? '←' : '✕'}
+              </button>
 
               {/* Left: image */}
               <div className={styles.dishDetailLeft}>
@@ -1332,16 +1348,38 @@ export default function MenuPage() {
                     </div>
                     <button
                       className={`${styles.dishDetailAddBtn} ${sel ? styles.dishDetailAddBtnActive : ""}`}
-                      onClick={() => { toggleDish(d, di); if (!sel) closeDetail(); }}
+                      onClick={() => {
+                        if (editingPlanDay) {
+                          if (sel) {
+                            setWeeklyMeals({ ...weeklyMeals, [editingPlanDay]: null });
+                            setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: 1 });
+                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: null });
+                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: {} });
+                          } else {
+                            setWeeklyMeals({
+                              ...weeklyMeals,
+                              [editingPlanDay]: { name: d.name, price: d.price, id: di }
+                            });
+                            setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: qty });
+                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[di] || null });
+                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: addons[di] || {} });
+                          }
+                          closeDetail();
+                          setEditingPlanDay(null);
+                        } else {
+                          toggleDish(d, di);
+                          if (!sel) closeDetail();
+                        }
+                      }}
                     >
                       {sel ? (
                         <>
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0}}>
                             <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
                           </svg>
-                          Remove from order
+                          {editingPlanDay ? 'Remove meal' : 'Remove from order'}
                         </>
-                      ) : `Add to order · £${((dishPrice * qty) + addonPrice).toFixed(2)}`}
+                      ) : editingPlanDay ? `Add meal · £${((dishPrice * qty) + addonPrice).toFixed(2)}` : `Add to order · £${((dishPrice * qty) + addonPrice).toFixed(2)}`}
                     </button>
                   </div>
                 )}
@@ -1435,11 +1473,8 @@ export default function MenuPage() {
                               key={idx}
                               className={styles.planDishOption}
                               onClick={() => {
-                                setWeeklyMeals({
-                                  ...weeklyMeals,
-                                  [day]: { name: dish.name, price: dish.price }
-                                });
-                                setWeeklyQtys({ ...weeklyQtys, [day]: 1 });
+                                setDetailDish({ ...dish, dayForPlan: day });
+                                setEditingPlanDay(day);
                               }}
                             >
                               <span className={styles.planDishName}>{dish.name}</span>
