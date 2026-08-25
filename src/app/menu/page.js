@@ -1356,13 +1356,14 @@ export default function MenuPage() {
                             setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: null });
                             setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: {} });
                           } else {
+                            const dishIndex = d.dishIndex !== undefined ? d.dishIndex : di;
                             setWeeklyMeals({
                               ...weeklyMeals,
-                              [editingPlanDay]: { name: d.name, price: d.price, id: di }
+                              [editingPlanDay]: { name: d.name, price: d.price, id: dishIndex }
                             });
                             setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: qty });
-                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[di] || null });
-                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: addons[di] || {} });
+                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[dishIndex] || null });
+                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: addons[dishIndex] || {} });
                           }
                           closeDetail();
                           setEditingPlanDay(null);
@@ -1473,8 +1474,22 @@ export default function MenuPage() {
                               key={idx}
                               className={styles.planDishOption}
                               onClick={() => {
-                                setDetailDish({ ...dish, dayForPlan: day });
+                                setDetailDish({ ...dish, dayForPlan: day, dishIndex: idx });
                                 setEditingPlanDay(day);
+                                // Initialize portions for this dish if not already set
+                                if (!portions[idx]) {
+                                  setPortions({
+                                    ...portions,
+                                    [idx]: dish.portions?.[0]?.size || null
+                                  });
+                                }
+                                // Initialize addons for this dish if not already set
+                                if (!addons[idx]) {
+                                  setAddons({
+                                    ...addons,
+                                    [idx]: {}
+                                  });
+                                }
                               }}
                             >
                               <span className={styles.planDishName}>{dish.name}</span>
