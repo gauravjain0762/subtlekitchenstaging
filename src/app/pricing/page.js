@@ -22,7 +22,7 @@ export default function PricingPage() {
   useEffect(() => {
     Promise.all([
       api.get("/api/subscriptions/available-plans"),
-      fetch("http://subtlebackendstaging.railway.internal/api/promo").then(res => res.json())
+      fetch("http://subtlebackendstaging-production.up.railway.app/api/promo").then(res => res.json())
     ])
       .then(([plansData, promosData]) => {
         const plansArray = plansData?.plans || plansData || [];
