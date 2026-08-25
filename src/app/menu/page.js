@@ -510,6 +510,7 @@ export default function MenuPage() {
   const [detailTab, setDetailTab] = useState("overview");
   const [lunchTime, setLunchTime] = useState("12:00 PM");
   const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
+  const [selectedPlan, setSelectedPlan] = useState("one-time");
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0;
@@ -893,6 +894,23 @@ export default function MenuPage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Plan selection */}
+          <div className={styles.pickerControlGroup}>
+            <span className={styles.pickerControlLabel}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+              Choose meal plan
+            </span>
+            <select
+              value={selectedPlan}
+              onChange={(e) => setSelectedPlan(e.target.value)}
+              className={styles.planDropdown}
+            >
+              <option value="one-time">One-Time Order</option>
+              <option value="weekly">Weekly Meal Plan</option>
+              <option value="alternate">One-Off Alternating Days</option>
+            </select>
           </div>
 
         </div>
