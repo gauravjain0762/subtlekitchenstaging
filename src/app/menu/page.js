@@ -520,7 +520,9 @@ export default function MenuPage() {
   const [selectedPlanDay, setSelectedPlanDay] = useState("Mon");
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
-  const selectedDay = selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0;
+  const selectedDay = selectedPlan !== "one-time"
+    ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(selectedPlanDay)
+    : (selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState("login");
   const [authForm, setAuthForm] = useState({ name: "", email: "", password: "" });
@@ -762,13 +764,54 @@ export default function MenuPage() {
     if (!dishPortions?.length) return "Regular";
     return dishPortions.find(p => p.size === "Regular")?.size || dishPortions[0].size;
   };
-  const getPortion = (d, di) => portions[getKey(d, di)] || getDefaultPortion(d, di);
-  const getQty = (d, di) => quantities[getKey(d, di)] || MIN_QUANTITY;
-  const getAddonSet = (d, di) => addons[getKey(d, di)] || new Set();
+  const getPortion = (d, di) => {
+    if (selectedPlan !== "one-time") {
+      return weeklyPortions[selectedPlanDay] || getDefaultPortion(d, di);
+    }
+    return portions[getKey(d, di)] || getDefaultPortion(d, di);
+  };
+  const getQty = (d, di) => {
+    if (selectedPlan !== "one-time") {
+      return weeklyQtys[selectedPlanDay] || MIN_QUANTITY;
+    }
+    return quantities[getKey(d, di)] || MIN_QUANTITY;
+  };
+  const getAddonSet = (d, di) => {
+    if (selectedPlan !== "one-time") {
+      return weeklyAddons[selectedPlanDay] || new Set();
+    }
+    return addons[getKey(d, di)] || new Set();
+  };
 
   const toggleDish = (d, di) => {
     if (!user) { setAuthOpen(true); return; }
     if (isDateClosed(selectedDate)) return;
+
+    // Plan mode: save to weeklyMeals
+    if (selectedPlan !== "one-time") {
+      const dish = menuDays[d]?.dishes[di];
+      if (!dish) return;
+
+      if (weeklyMeals[selectedPlanDay]?.id === di) {
+        // Remove from plan
+        setWeeklyMeals({ ...weeklyMeals, [selectedPlanDay]: null });
+        setWeeklyQtys({ ...weeklyQtys, [selectedPlanDay]: 1 });
+        setWeeklyPortions({ ...weeklyPortions, [selectedPlanDay]: null });
+        setWeeklyAddons({ ...weeklyAddons, [selectedPlanDay]: {} });
+      } else {
+        // Add to plan
+        setWeeklyMeals({
+          ...weeklyMeals,
+          [selectedPlanDay]: { name: dish.name, price: dish.price, id: di }
+        });
+        setWeeklyQtys({ ...weeklyQtys, [selectedPlanDay]: 1 });
+        setWeeklyPortions({ ...weeklyPortions, [selectedPlanDay]: getDefaultPortion(d, di) });
+        setWeeklyAddons({ ...weeklyAddons, [selectedPlanDay]: {} });
+      }
+      return;
+    }
+
+    // One-time mode: normal behavior
     const k = getKey(d, di);
     setSelected(s => {
       const next = { ...s };
@@ -780,9 +823,24 @@ export default function MenuPage() {
     setExpandedDish(null);
   };
 
-  const setPortion = (d, di, v) => setPortions(p => ({ ...p, [getKey(d, di)]: v }));
+  const setPortion = (d, di, v) => {
+    if (selectedPlan !== "one-time") {
+      setWeeklyPortions(p => ({ ...p, [selectedPlanDay]: v }));
+    } else {
+      setPortions(p => ({ ...p, [getKey(d, di)]: v }));
+    }
+  };
 
   const toggleAddon = (d, di, name) => {
+    if (selectedPlan !== "one-time") {
+      setWeeklyAddons(a => {
+        const s = new Set(a[selectedPlanDay] || []);
+        s.has(name) ? s.delete(name) : s.add(name);
+        return { ...a, [selectedPlanDay]: s };
+      });
+      return;
+    }
+
     const k = getKey(d, di);
     setAddons(a => {
       const s = new Set(a[k] || []);
@@ -806,8 +864,20 @@ export default function MenuPage() {
     setAddonQtys(q => ({ ...q, [k]: { ...(q[k] || {}), [name]: Math.max(1, (q[k]?.[name] || 1) - 1) } }));
   };
 
-  const incrQty = (d, di) => setQuantities(q => ({ ...q, [getKey(d, di)]: Math.min(MAX_QUANTITY, getQty(d, di) + 1) }));
-  const decrQty = (d, di) => setQuantities(q => ({ ...q, [getKey(d, di)]: Math.max(MIN_QUANTITY, getQty(d, di) - 1) }));
+  const incrQty = (d, di) => {
+    if (selectedPlan !== "one-time") {
+      setWeeklyQtys(q => ({ ...q, [selectedPlanDay]: Math.min(MAX_QUANTITY, (q[selectedPlanDay] || 1) + 1) }));
+    } else {
+      setQuantities(q => ({ ...q, [getKey(d, di)]: Math.min(MAX_QUANTITY, getQty(d, di) + 1) }));
+    }
+  };
+  const decrQty = (d, di) => {
+    if (selectedPlan !== "one-time") {
+      setWeeklyQtys(q => ({ ...q, [selectedPlanDay]: Math.max(MIN_QUANTITY, (q[selectedPlanDay] || 1) - 1) }));
+    } else {
+      setQuantities(q => ({ ...q, [getKey(d, di)]: Math.max(MIN_QUANTITY, getQty(d, di) - 1) }));
+    }
+  };
 
   const dayHasItems = (d) => menuDays[d]?.dishes.some((_, di) => isSelectedDish(d, di));
 
