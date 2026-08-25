@@ -915,11 +915,20 @@ export default function MenuPage() {
     }, 0);
   };
 
-  const orderItems = Object.keys(selected).map(k => {
-    const [d, di] = k.split("_").map(Number);
-    const dish = menuDays[d]?.dishes[di];
-    return { k, d, di, dish, portion: getPortion(d, di), qty: getQty(d, di), dishPrice: getDishPrice(d, di), addonPrice: getAddonTotal(d, di) };
-  });
+  const orderItems = selectedPlan !== "one-time"
+    ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, dayIdx) => {
+        const meal = weeklyMeals[day];
+        if (!meal) return null;
+        const di = meal.id;
+        const d = dayIdx;
+        const dish = menuDays[d]?.dishes[di];
+        return dish ? { k: `${d}_${di}`, d, di, dish, portion: weeklyPortions[day], qty: weeklyQtys[day], dishPrice: meal.price, addonPrice: 0 } : null;
+      }).filter(Boolean)
+    : Object.keys(selected).map(k => {
+        const [d, di] = k.split("_").map(Number);
+        const dish = menuDays[d]?.dishes[di];
+        return { k, d, di, dish, portion: getPortion(d, di), qty: getQty(d, di), dishPrice: getDishPrice(d, di), addonPrice: getAddonTotal(d, di) };
+      });
 
   const subtotal = orderItems.reduce((s, x) => s + (x.dishPrice * x.qty) + x.addonPrice, 0);
   const hasDishesToday = (menuDays[selectedDay]?.dishes?.length ?? 0) > 0;
