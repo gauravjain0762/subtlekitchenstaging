@@ -1358,7 +1358,7 @@ export default function MenuPage() {
                           } else {
                             setWeeklyMeals({
                               ...weeklyMeals,
-                              [editingPlanDay]: { name: d.name, price: d.price, id: di }
+                              [editingPlanDay]: { name: dish.name, price: dish.price, id: di }
                             });
                             setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: qty });
                             setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[di] || null });
