@@ -514,7 +514,7 @@ export default function MenuPage() {
   const [weeklyMeals, setWeeklyMeals] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
   const [weeklyQtys, setWeeklyQtys] = useState({ Mon: 1, Tue: 1, Wed: 1, Thu: 1, Fri: 1 });
   const [weeklyPortions, setWeeklyPortions] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
-  const [weeklyAddons, setWeeklyAddons] = useState({ Mon: {}, Tue: {}, Wed: {}, Thu: {}, Fri: {} });
+  const [weeklyAddons, setWeeklyAddons] = useState({ Mon: new Set(), Tue: new Set(), Wed: new Set(), Thu: new Set(), Fri: new Set() });
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [editingPlanDay, setEditingPlanDay] = useState(null);
   const [selectedPlanDay, setSelectedPlanDay] = useState("Mon");
@@ -797,7 +797,7 @@ export default function MenuPage() {
         setWeeklyMeals({ ...weeklyMeals, [selectedPlanDay]: null });
         setWeeklyQtys({ ...weeklyQtys, [selectedPlanDay]: 1 });
         setWeeklyPortions({ ...weeklyPortions, [selectedPlanDay]: null });
-        setWeeklyAddons({ ...weeklyAddons, [selectedPlanDay]: {} });
+        setWeeklyAddons({ ...weeklyAddons, [selectedPlanDay]: new Set() });
       } else {
         // Add to plan
         setWeeklyMeals({
@@ -806,7 +806,7 @@ export default function MenuPage() {
         });
         setWeeklyQtys({ ...weeklyQtys, [selectedPlanDay]: 1 });
         setWeeklyPortions({ ...weeklyPortions, [selectedPlanDay]: getDefaultPortion(d, di) });
-        setWeeklyAddons({ ...weeklyAddons, [selectedPlanDay]: {} });
+        setWeeklyAddons({ ...weeklyAddons, [selectedPlanDay]: new Set() });
       }
       return;
     }
