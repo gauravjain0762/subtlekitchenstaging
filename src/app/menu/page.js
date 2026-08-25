@@ -1059,7 +1059,17 @@ export default function MenuPage() {
         {hasDishesToday && (
           <div className={styles.dayTheme}>
             <span className={styles.dayThemeLabel}>
-              {selectedDate ? selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) : ""}
+              {selectedPlan !== "one-time" ? (() => {
+                const today = new Date();
+                const currentDay = today.getDay();
+                const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                const nextMonday = new Date(today);
+                nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(selectedPlanDay);
+                const dayDate = new Date(nextMonday);
+                dayDate.setDate(nextMonday.getDate() + dayIndex);
+                return dayDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" });
+              })() : (selectedDate ? selectedDate.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }) : "")}
             </span>
             <span className={styles.dayThemeDate}>{menuDays[selectedDay]?.dishes.length ?? 0} dishes</span>
           </div>
