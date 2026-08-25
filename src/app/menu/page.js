@@ -1473,7 +1473,8 @@ export default function MenuPage() {
                               key={idx}
                               className={styles.planDishOption}
                               onClick={() => {
-                                setDetailDish({ d: dish, di: idx, dayForPlan: day });
+                                const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(day);
+                                setDetailDish({ d: dayIndex, di: idx, dayForPlan: day });
                                 setEditingPlanDay(day);
                                 // Initialize portions for this dish if not already set
                                 if (!portions[idx]) {
