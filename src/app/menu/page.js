@@ -1472,15 +1472,16 @@ export default function MenuPage() {
                             setWeeklyMeals({ ...weeklyMeals, [editingPlanDay]: null });
                             setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: 1 });
                             setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: null });
-                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: {} });
+                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: new Set() });
                           } else {
+                            const currentAddons = getAddonSet(d, di);
                             setWeeklyMeals({
                               ...weeklyMeals,
                               [editingPlanDay]: { name: dish.name, price: dish.price, id: di }
                             });
                             setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: qty });
-                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[di] || null });
-                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: addons[di] || {} });
+                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portion || null });
+                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: new Set(currentAddons) });
                           }
                           closeDetail();
                           setEditingPlanDay(null);
