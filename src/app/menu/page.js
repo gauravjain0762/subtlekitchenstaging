@@ -511,6 +511,8 @@ export default function MenuPage() {
   const [lunchTime, setLunchTime] = useState("12:00 PM");
   const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
   const [selectedPlan, setSelectedPlan] = useState("one-time");
+  const [weeklyMeals, setWeeklyMeals] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
+  const [showPlanModal, setShowPlanModal] = useState(false);
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0;
@@ -904,7 +906,13 @@ export default function MenuPage() {
             </span>
             <select
               value={selectedPlan}
-              onChange={(e) => setSelectedPlan(e.target.value)}
+              onChange={(e) => {
+                const plan = e.target.value;
+                setSelectedPlan(plan);
+                if (plan !== "one-time") {
+                  setShowPlanModal(true);
+                }
+              }}
               className={styles.planDropdown}
             >
               <option value="one-time">One-Time Order</option>
@@ -1341,6 +1349,82 @@ export default function MenuPage() {
           </div>
         );
       })()}
+
+      {/* Plan Meal Selection Modal */}
+      {showPlanModal && (
+        <div className={styles.planModalOverlay} onClick={() => setShowPlanModal(false)}>
+          <div className={styles.planModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.planModalHeader}>
+              <h2 className={styles.planModalTitle}>
+                {selectedPlan === 'weekly' ? 'Weekly Meal Plan' : 'Alternating Days Plan'}
+              </h2>
+              <button
+                className={styles.planModalClose}
+                onClick={() => setShowPlanModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className={styles.planDaysGrid}>
+              {Object.keys(weeklyMeals).map((day) => {
+                const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(day);
+                const dayDishes = menuDays[dayIndex]?.dishes || [];
+                const selectedMeal = weeklyMeals[day];
+
+                return (
+                  <div key={day} className={styles.planDayCard}>
+                    <div className={styles.planDayHeader}>
+                      <h3 className={styles.planDayName}>{day}</h3>
+                      {selectedMeal && (
+                        <span className={styles.planDayBadge}>✓ Selected</span>
+                      )}
+                    </div>
+
+                    <div className={styles.planDishList}>
+                      {dayDishes.length > 0 ? (
+                        dayDishes.map((dish, idx) => (
+                          <button
+                            key={idx}
+                            className={`${styles.planDishOption} ${selectedMeal?.name === dish.name ? styles.planDishOptionActive : ''}`}
+                            onClick={() => {
+                              setWeeklyMeals({
+                                ...weeklyMeals,
+                                [day]: { name: dish.name, price: dish.price }
+                              });
+                            }}
+                          >
+                            <span className={styles.planDishName}>{dish.name}</span>
+                            <span className={styles.planDishPrice}>£{Number(dish.price).toFixed(2)}</span>
+                          </button>
+                        ))
+                      ) : (
+                        <p className={styles.planDishEmpty}>No dishes available</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className={styles.planModalFooter}>
+              <button
+                className={styles.planModalCancel}
+                onClick={() => setShowPlanModal(false)}
+              >
+                Back
+              </button>
+              <button
+                className={styles.planModalConfirm}
+                onClick={() => setShowPlanModal(false)}
+                disabled={Object.values(weeklyMeals).some(m => !m)}
+              >
+                Confirm Selection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
       {authOpen && <AuthPanel onClose={() => setAuthOpen(false)} />}
