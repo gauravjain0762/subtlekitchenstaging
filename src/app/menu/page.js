@@ -517,6 +517,7 @@ export default function MenuPage() {
   const [weeklyAddons, setWeeklyAddons] = useState({ Mon: {}, Tue: {}, Wed: {}, Thu: {}, Fri: {} });
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [editingPlanDay, setEditingPlanDay] = useState(null);
+  const [selectedPlanDay, setSelectedPlanDay] = useState("Mon");
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedDate ? Math.min((selectedDate.getDay() + 6) % 7, 4) : 0;
@@ -869,18 +870,45 @@ export default function MenuPage() {
         {/* Picker row — calendar + time chips */}
         <div className={styles.dayPickerRow}>
 
-          {/* Calendar date picker */}
-          <div className={styles.pickerControlGroup}>
-            <span className={styles.pickerControlLabel}>
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Choose lunch date
-            </span>
-            <CalendarPicker
-              selectedDate={selectedDate}
-              onChange={setSelectedDate}
-              hasItemsForDow={(dow) => dayHasItems(dow)}
-            />
-          </div>
+          {/* Calendar date picker or Day selector for plans */}
+          {selectedPlan === "one-time" ? (
+            <div className={styles.pickerControlGroup}>
+              <span className={styles.pickerControlLabel}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Choose lunch date
+              </span>
+              <CalendarPicker
+                selectedDate={selectedDate}
+                onChange={setSelectedDate}
+                hasItemsForDow={(dow) => dayHasItems(dow)}
+              />
+            </div>
+          ) : (
+            <div className={styles.pickerControlGroup}>
+              <span className={styles.pickerControlLabel}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Choose week days
+              </span>
+              <div className={styles.weekDayChips}>
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, idx) => {
+                  const dayIndex = idx;
+                  const dayDate = menuDays[dayIndex];
+                  const dateStr = dayDate?.date || '';
+                  return (
+                    <button
+                      key={day}
+                      type="button"
+                      className={`${styles.weekDayChip} ${selectedPlanDay === day ? styles.weekDayChipActive : ""}`}
+                      onClick={() => setSelectedPlanDay(day)}
+                    >
+                      <div className={styles.weekDayName}>{day}</div>
+                      <div className={styles.weekDayDate}>{dateStr}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Lunch time */}
           <div className={styles.pickerControlGroup}>
@@ -913,9 +941,7 @@ export default function MenuPage() {
               onChange={(e) => {
                 const plan = e.target.value;
                 setSelectedPlan(plan);
-                if (plan !== "one-time") {
-                  setShowPlanModal(true);
-                }
+                setSelectedPlanDay("Mon");
               }}
               className={styles.planDropdown}
             >
