@@ -1235,10 +1235,20 @@ export default function MenuPage() {
               </div>
 
               <button
-                className={`${styles.reviewBtn} ${orderItems.length === 0 ? styles.reviewBtnDisabled : ""}`}
-                disabled={orderItems.length === 0}
+                className={`${styles.reviewBtn} ${(orderItems.length === 0 || (selectedPlan !== "one-time" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day]))) ? styles.reviewBtnDisabled : ""}`}
+                disabled={orderItems.length === 0 || (selectedPlan !== "one-time" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day]))}
                 onClick={() => {
                   if (!orderItems.length) return;
+
+                  // Validate all days are selected for weekly plan
+                  if (selectedPlan !== "one-time") {
+                    const allDaysSelected = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day]);
+                    if (!allDaysSelected) {
+                      alert("Please select meals for all weekdays (Mon-Fri)");
+                      return;
+                    }
+                  }
+
                   const payload = {
                     workspaceCode: user?.workspaceCode || "",
                     deliveryDate: selectedDate ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,"0")}-${String(selectedDate.getDate()).padStart(2,"0")}` : "",
