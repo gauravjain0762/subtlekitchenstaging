@@ -1356,14 +1356,13 @@ export default function MenuPage() {
                             setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: null });
                             setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: {} });
                           } else {
-                            const dishIndex = d.dishIndex !== undefined ? d.dishIndex : di;
                             setWeeklyMeals({
                               ...weeklyMeals,
-                              [editingPlanDay]: { name: d.name, price: d.price, id: dishIndex }
+                              [editingPlanDay]: { name: d.name, price: d.price, id: di }
                             });
                             setWeeklyQtys({ ...weeklyQtys, [editingPlanDay]: qty });
-                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[dishIndex] || null });
-                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: addons[dishIndex] || {} });
+                            setWeeklyPortions({ ...weeklyPortions, [editingPlanDay]: portions[di] || null });
+                            setWeeklyAddons({ ...weeklyAddons, [editingPlanDay]: addons[di] || {} });
                           }
                           closeDetail();
                           setEditingPlanDay(null);
@@ -1474,7 +1473,7 @@ export default function MenuPage() {
                               key={idx}
                               className={styles.planDishOption}
                               onClick={() => {
-                                setDetailDish({ ...dish, dayForPlan: day, dishIndex: idx });
+                                setDetailDish({ d: dish, di: idx, dayForPlan: day });
                                 setEditingPlanDay(day);
                                 // Initialize portions for this dish if not already set
                                 if (!portions[idx]) {
