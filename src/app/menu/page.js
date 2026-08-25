@@ -961,9 +961,21 @@ export default function MenuPage() {
               </span>
               <div className={styles.weekDayChips}>
                 {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, idx) => {
-                  const dayIndex = idx;
-                  const dayDate = menuDays[dayIndex];
-                  const dateStr = dayDate?.date || '';
+                  // Calculate next Monday's date
+                  const today = new Date();
+                  const currentDay = today.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+                  const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                  const nextMonday = new Date(today);
+                  nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+
+                  // Calculate the date for this specific day of the week
+                  const dayDate = new Date(nextMonday);
+                  dayDate.setDate(nextMonday.getDate() + idx);
+
+                  // Format as "DD Mon" (e.g., "30 Aug")
+                  const options = { day: 'numeric', month: 'short' };
+                  const dateStr = dayDate.toLocaleDateString('en-GB', options);
+
                   return (
                     <button
                       key={day}
