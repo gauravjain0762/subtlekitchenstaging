@@ -1,4 +1,4 @@
-const BASE = "https://subtlebackendstaging-production.up.railway.app";
+const BASE = "http://subtlebackendstaging.railway.internal";
 
 function getToken() {
   if (typeof window === "undefined") return null;
