@@ -922,7 +922,7 @@ export default function MenuPage() {
         const di = meal.id;
         const d = dayIdx;
         const dish = menuDays[d]?.dishes[di];
-        return dish ? { k: `${d}_${di}`, d, di, dish, portion: weeklyPortions[day], qty: weeklyQtys[day], dishPrice: meal.price, addonPrice: 0 } : null;
+        return dish ? { k: `${d}_${di}`, d, di, dish, portion: weeklyPortions[day], qty: weeklyQtys[day], dishPrice: meal.price, addonPrice: 0, planDay: day } : null;
       }).filter(Boolean)
     : Object.keys(selected).map(k => {
         const [d, di] = k.split("_").map(Number);
@@ -1185,7 +1185,7 @@ export default function MenuPage() {
                 </div>
               ) : (
                 <div className={styles.basketList}>
-                  {orderItems.map(({ k, d, di, dish, portion, qty, dishPrice, addonPrice }) => {
+                  {orderItems.map(({ k, d, di, dish, portion, qty, dishPrice, addonPrice, planDay }) => {
                     const addonSet = getAddonSet(d, di);
                     const addonNames = [...addonSet];
                     const itemTotal = (dishPrice * qty) + addonPrice;
@@ -1248,7 +1248,17 @@ export default function MenuPage() {
                         <span className={styles.basketPrice}>£{itemTotal.toFixed(2)}</span>
                         <button
                           className={styles.basketRemoveBtn}
-                          onClick={() => toggleDish(d, di)}
+                          onClick={() => {
+                            if (planDay) {
+                              // In plan mode, remove from weeklyMeals
+                              setWeeklyMeals({ ...weeklyMeals, [planDay]: null });
+                              setWeeklyQtys({ ...weeklyQtys, [planDay]: 1 });
+                              setWeeklyPortions({ ...weeklyPortions, [planDay]: null });
+                              setWeeklyAddons({ ...weeklyAddons, [planDay]: new Set() });
+                            } else {
+                              toggleDish(d, di);
+                            }
+                          }}
                           aria-label="Remove"
                         >
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
