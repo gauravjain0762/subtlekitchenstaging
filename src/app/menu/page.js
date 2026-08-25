@@ -512,6 +512,7 @@ export default function MenuPage() {
   const availableLunchTimes = user?.workspaceDeliveryTimes?.length ? user.workspaceDeliveryTimes : LUNCH_TIMES;
   const [selectedPlan, setSelectedPlan] = useState("one-time");
   const [weeklyMeals, setWeeklyMeals] = useState({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
+  const [weeklyQtys, setWeeklyQtys] = useState({ Mon: 1, Tue: 1, Wed: 1, Thu: 1, Fri: 1 });
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [weekly, setWeekly] = useState(false);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
@@ -1371,6 +1372,7 @@ export default function MenuPage() {
                 const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(day);
                 const dayDishes = menuDays[dayIndex]?.dishes || [];
                 const selectedMeal = weeklyMeals[day];
+                const qty = weeklyQtys[day] || 1;
 
                 return (
                   <div key={day} className={styles.planDayCard}>
@@ -1381,27 +1383,74 @@ export default function MenuPage() {
                       )}
                     </div>
 
-                    <div className={styles.planDishList}>
-                      {dayDishes.length > 0 ? (
-                        dayDishes.map((dish, idx) => (
+                    {selectedMeal ? (
+                      <div className={styles.planSelectedMeal}>
+                        <div className={styles.planSelectedMealInfo}>
+                          <p className={styles.planSelectedMealName}>{selectedMeal.name}</p>
+                          <p className={styles.planSelectedMealPrice}>£{Number(selectedMeal.price).toFixed(2)}</p>
+                        </div>
+                        <div className={styles.planMealControls}>
+                          <div className={styles.planQtyControl}>
+                            <button
+                              className={styles.planQtyBtn}
+                              onClick={() => {
+                                if (qty > 1) {
+                                  setWeeklyQtys({ ...weeklyQtys, [day]: qty - 1 });
+                                }
+                              }}
+                              disabled={qty <= 1}
+                            >
+                              −
+                            </button>
+                            <span className={styles.planQtyNum}>{qty}</span>
+                            <button
+                              className={styles.planQtyBtn}
+                              onClick={() => {
+                                if (qty < 10) {
+                                  setWeeklyQtys({ ...weeklyQtys, [day]: qty + 1 });
+                                }
+                              }}
+                              disabled={qty >= 10}
+                            >
+                              +
+                            </button>
+                          </div>
                           <button
-                            key={idx}
-                            className={`${styles.planDishOption} ${selectedMeal?.name === dish.name ? styles.planDishOptionActive : ''}`}
+                            className={styles.planDeleteBtn}
                             onClick={() => {
-                              setWeeklyMeals({
-                                ...weeklyMeals,
-                                [day]: { name: dish.name, price: dish.price }
-                              });
+                              setWeeklyMeals({ ...weeklyMeals, [day]: null });
+                              setWeeklyQtys({ ...weeklyQtys, [day]: 1 });
                             }}
+                            title="Remove this meal"
                           >
-                            <span className={styles.planDishName}>{dish.name}</span>
-                            <span className={styles.planDishPrice}>£{Number(dish.price).toFixed(2)}</span>
+                            🗑️
                           </button>
-                        ))
-                      ) : (
-                        <p className={styles.planDishEmpty}>No dishes available</p>
-                      )}
-                    </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={styles.planDishList}>
+                        {dayDishes.length > 0 ? (
+                          dayDishes.map((dish, idx) => (
+                            <button
+                              key={idx}
+                              className={styles.planDishOption}
+                              onClick={() => {
+                                setWeeklyMeals({
+                                  ...weeklyMeals,
+                                  [day]: { name: dish.name, price: dish.price }
+                                });
+                                setWeeklyQtys({ ...weeklyQtys, [day]: 1 });
+                              }}
+                            >
+                              <span className={styles.planDishName}>{dish.name}</span>
+                              <span className={styles.planDishPrice}>£{Number(dish.price).toFixed(2)}</span>
+                            </button>
+                          ))
+                        ) : (
+                          <p className={styles.planDishEmpty}>No dishes available</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
