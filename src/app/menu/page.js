@@ -1189,12 +1189,25 @@ export default function MenuPage() {
                     const addonSet = getAddonSet(d, di);
                     const addonNames = [...addonSet];
                     const itemTotal = (dishPrice * qty) + addonPrice;
+
+                    // Calculate the date for this item
+                    let itemDate = selectedDate;
+                    if (selectedPlan !== "one-time") {
+                      const today = new Date();
+                      const currentDay = today.getDay();
+                      const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                      const nextMonday = new Date(today);
+                      nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                      itemDate = new Date(nextMonday);
+                      itemDate.setDate(nextMonday.getDate() + d);
+                    }
+
                     return (
                     <div key={k} className={styles.basketItem}>
                       <div className={styles.basketItemLeft}>
                         <div className={styles.basketDay}>
-                          <span className={styles.basketDayNum}>{selectedDate ? selectedDate.getDate() : "—"}</span>
-                          <span className={styles.basketDayMon}>{selectedDate ? selectedDate.toLocaleDateString("en-GB", { month: "short" }).toUpperCase() : "—"}</span>
+                          <span className={styles.basketDayNum}>{itemDate ? itemDate.getDate() : "—"}</span>
+                          <span className={styles.basketDayMon}>{itemDate ? itemDate.toLocaleDateString("en-GB", { month: "short" }).toUpperCase() : "—"}</span>
                         </div>
                         <div className={styles.basketDetails}>
                           <p className={styles.basketName}>{dish.name}</p>
