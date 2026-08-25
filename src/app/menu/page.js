@@ -881,7 +881,13 @@ export default function MenuPage() {
 
   const dayHasItems = (d) => menuDays[d]?.dishes.some((_, di) => isSelectedDish(d, di));
 
-  const openDetail = (d, di) => { setDetailDish({ d, di }); setDetailTab("overview"); };
+  const openDetail = (d, di) => {
+    setDetailDish({ d, di });
+    setDetailTab("overview");
+    if (selectedPlan !== "one-time") {
+      setEditingPlanDay(selectedPlanDay);
+    }
+  };
   const closeDetail = () => setDetailDish(null);
 
   const getDishPrice = (d, di) => {
