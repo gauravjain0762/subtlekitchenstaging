@@ -1354,7 +1354,7 @@ export default function MenuPage() {
                     deliveryDate,
                     deliveryDateDisplay,
                     lunchTime,
-                    isWeeklySubscription: weekly,
+                    isWeeklySubscription: selectedPlan !== "one-time",
                     items: orderItems.map(({ d, di, dish, portion, qty }) => ({
                       dishId:   dish?._id,
                       dishName: dish?.name,
