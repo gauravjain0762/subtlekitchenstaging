@@ -1330,10 +1330,29 @@ export default function MenuPage() {
                     }
                   }
 
+                  // Determine delivery date based on plan type
+                  let deliveryDate = "";
+                  let deliveryDateDisplay = "";
+
+                  if (selectedPlan !== "one-time") {
+                    // For weekly plans, use Monday's date
+                    const today = new Date();
+                    const currentDay = today.getDay();
+                    const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                    const nextMonday = new Date(today);
+                    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                    deliveryDate = `${nextMonday.getFullYear()}-${String(nextMonday.getMonth()+1).padStart(2,"0")}-${String(nextMonday.getDate()).padStart(2,"0")}`;
+                    deliveryDateDisplay = nextMonday.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+                  } else {
+                    // For one-time orders, use selected date
+                    deliveryDate = selectedDate ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,"0")}-${String(selectedDate.getDate()).padStart(2,"0")}` : "";
+                    deliveryDateDisplay = selectedDate ? selectedDate.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "";
+                  }
+
                   const payload = {
                     workspaceCode: user?.workspaceCode || "",
-                    deliveryDate: selectedDate ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,"0")}-${String(selectedDate.getDate()).padStart(2,"0")}` : "",
-                    deliveryDateDisplay: selectedDate ? selectedDate.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" }) : "",
+                    deliveryDate,
+                    deliveryDateDisplay,
                     lunchTime,
                     isWeeklySubscription: weekly,
                     items: orderItems.map(({ d, di, dish, portion, qty }) => ({
