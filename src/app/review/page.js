@@ -248,9 +248,13 @@ export default function ReviewPage() {
     if (!user) { setAuthOpen(true); return; }
     if (!order || items.length === 0) return;
 
-    // For subscription orders, validate we only have one meal
-    if (selectedPlan !== "one-time" && items.length > 1) {
-      setSubmitError("Subscription plans work with one meal at a time. Please remove extra items.");
+    // For subscription orders, validate meal count
+    if (selectedPlan === "weekly" && items.length !== 5) {
+      setSubmitError("Weekly plans require exactly 5 meals (one per weekday). Please select meals for all days.");
+      return;
+    }
+    if (selectedPlan === "one-off" && items.length < 1) {
+      setSubmitError("Please select at least one meal for your order.");
       return;
     }
 
