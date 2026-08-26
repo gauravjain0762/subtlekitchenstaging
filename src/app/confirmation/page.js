@@ -265,10 +265,6 @@ function ConfirmationPageInner() {
                   </div>
 
                   <div className={styles.totalRow} style={{ opacity: 0.65 }}>
-                    <span className={styles.totalLabel}>Price per meal</span>
-                    <span className={styles.totalAmt}>£{Number(order?.subscription?.mealPrice).toFixed(2)}</span>
-                  </div>
-                  <div className={styles.totalRow} style={{ opacity: 0.65 }}>
                     <span className={styles.totalLabel}>Delivery days per week</span>
                     <span className={styles.totalAmt}>{order?.subscription?.pattern?.length || 5}</span>
                   </div>
