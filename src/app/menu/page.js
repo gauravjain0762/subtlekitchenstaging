@@ -790,7 +790,21 @@ export default function MenuPage() {
 
   const toggleDish = (d, di) => {
     if (!user) { setAuthOpen(true); return; }
-    if (isDateClosed(selectedDate)) return;
+
+    // Determine the date to check for "Ordering Closed"
+    let dateToCheck = selectedDate;
+    if (selectedPlan !== "one-time") {
+      const today = new Date();
+      const currentDay = today.getDay();
+      const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+      const nextMonday = new Date(today);
+      nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+      const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(selectedPlanDay);
+      dateToCheck = new Date(nextMonday);
+      dateToCheck.setDate(nextMonday.getDate() + dayIndex);
+    }
+
+    if (isDateClosed(dateToCheck)) return;
 
     // Plan mode: save to weeklyMeals
     if (selectedPlan !== "one-time") {
@@ -1088,7 +1102,21 @@ export default function MenuPage() {
           <div className={styles.dishGrid}>
             {(menuDays[selectedDay]?.dishes || []).map((dish, di) => {
               const sel = isSelectedDish(selectedDay, di);
-              const closed = isDateClosed(selectedDate);
+
+              // Determine the date to check for "Ordering Closed"
+              let dateToCheck = selectedDate;
+              if (selectedPlan !== "one-time") {
+                const today = new Date();
+                const currentDay = today.getDay();
+                const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                const nextMonday = new Date(today);
+                nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(selectedPlanDay);
+                dateToCheck = new Date(nextMonday);
+                dateToCheck.setDate(nextMonday.getDate() + dayIndex);
+              }
+
+              const closed = isDateClosed(dateToCheck);
               const isFav = !!dish._id && favorites.has(dish._id);
 
               return (
@@ -1505,7 +1533,19 @@ export default function MenuPage() {
                 )}
 
                 {/* Footer */}
-                {isDateClosed(selectedDate) ? (
+                {(() => {
+                  let dateToCheck = selectedDate;
+                  if (selectedPlan !== "one-time") {
+                    const today = new Date();
+                    const currentDay = today.getDay();
+                    const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+                    const nextMonday = new Date(today);
+                    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+                    dateToCheck = new Date(nextMonday);
+                    dateToCheck.setDate(nextMonday.getDate() + d);
+                  }
+                  return isDateClosed(dateToCheck);
+                })() ? (
                   <div className={styles.dishDetailClosedFooter}>
                     <strong>Ordering Closed</strong>
                     <p>This meal can no longer be ordered. Please place orders by 10:00 PM the day before delivery.</p>
