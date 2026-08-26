@@ -809,6 +809,9 @@ export default function MenuPage() {
   const toggleDish = (d, di) => {
     if (!user) { setAuthOpen(true); return; }
 
+    // Check if dish is currently selected
+    const isCurrentlySelected = isSelectedDish(d, di);
+
     // Determine the date to check for "Ordering Closed"
     let dateToCheck = selectedDate;
     if (selectedPlan !== "one-time") {
@@ -822,7 +825,8 @@ export default function MenuPage() {
       dateToCheck.setDate(nextMonday.getDate() + dayIndex);
     }
 
-    if (isDateClosed(dateToCheck)) return;
+    // Prevent adding new items when closed, but allow removing existing items
+    if (isDateClosed(dateToCheck) && !isCurrentlySelected) return;
 
     // Plan mode: save to weeklyMeals
     if (selectedPlan !== "one-time") {
