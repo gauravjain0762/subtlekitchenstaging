@@ -35,11 +35,18 @@ export default function ReviewPage() {
     setOrder(parsed);
     setItems(parsed?.items || []);
 
-    // Auto-select plan based on order type
+    // Auto-select plan and set start date based on order type
     if (parsed?.isWeeklySubscription === true) {
       setSelectedPlan("weekly");
+      // Use the delivery date from order as start date
+      if (parsed?.deliveryDate) {
+        setStartDate(parsed.deliveryDate);
+      }
     } else if (parsed?.isWeeklySubscription === false && parsed?.items?.length > 1) {
       setSelectedPlan("one-off");
+      if (parsed?.deliveryDate) {
+        setStartDate(parsed.deliveryDate);
+      }
     } else {
       setSelectedPlan("one-time");
     }
