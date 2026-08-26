@@ -34,6 +34,15 @@ export default function ReviewPage() {
     catch { parsed = null; }
     setOrder(parsed);
     setItems(parsed?.items || []);
+
+    // Auto-select plan based on order type
+    if (parsed?.isWeeklySubscription === true) {
+      setSelectedPlan("weekly");
+    } else if (parsed?.isWeeklySubscription === false && parsed?.items?.length > 1) {
+      setSelectedPlan("one-off");
+    } else {
+      setSelectedPlan("one-time");
+    }
   }, []);
 
   const removeItem = (i) => setItems(prev => prev.filter((_, idx) => idx !== i));
@@ -560,13 +569,14 @@ export default function ReviewPage() {
               <h3 className={styles.planSectionTitle}>Deliver as recurring meal plan? (optional)</h3>
               <div className={styles.plansGrid}>
                 {Object.entries(plans).map(([key, plan]) => (
-                  <label key={key} className={`${styles.planCard} ${selectedPlan === key ? styles.planCardSelected : ""}`}>
+                  <label key={key} className={`${styles.planCard} ${selectedPlan === key ? styles.planCardSelected : ""} ${order ? styles.planCardDisabled : ""}`}>
                     <input
                       type="radio"
                       name="plan"
                       value={key}
                       checked={selectedPlan === key}
                       onChange={() => setSelectedPlan(key)}
+                      disabled={!!order}
                       className={styles.planRadio}
                     />
                     <div className={styles.planCardContent}>
