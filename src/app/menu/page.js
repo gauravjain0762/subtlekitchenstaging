@@ -541,7 +541,19 @@ export default function MenuPage() {
   const [favorites, setFavorites] = useState(new Set());
   const saveTimerRef = useRef(null);
 
-  useEffect(() => { sessionStorage.removeItem("reorder_items"); }, []);
+  useEffect(() => {
+    sessionStorage.removeItem("reorder_items");
+    // Clear cart on fresh page load (not from review/checkout)
+    if (!sessionStorage.getItem("sk_returning_from_checkout")) {
+      setSelected({});
+      setPortions({});
+      setQuantities({});
+      setAddons({});
+      setAddonQtys({});
+    } else {
+      sessionStorage.removeItem("sk_returning_from_checkout");
+    }
+  }, []);
 
   // Show loading animation when user switches dates
   useEffect(() => {
@@ -662,11 +674,17 @@ export default function MenuPage() {
 
   // Load cart from API once menu is ready and user is logged in
   // Skip if reorder items exist in sessionStorage (reorder takes priority)
+  // Skip on fresh page loads to start with empty cart
   useEffect(() => {
     if (!user || menuLoading) return;
     if (readReorderItems().length > 0) {
       const t = setTimeout(() => setCartLoaded(true), 0);
       return () => clearTimeout(t);
+    }
+    // Only restore cart if returning from checkout
+    if (!sessionStorage.getItem("sk_returning_from_checkout")) {
+      setCartLoaded(true);
+      return;
     }
     api.get("/api/cart")
       .then(data => {
