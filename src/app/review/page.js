@@ -603,6 +603,7 @@ export default function ReviewPage() {
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
+                      disabled={!!order}
                       className={styles.dateInput}
                     />
                   </div>
