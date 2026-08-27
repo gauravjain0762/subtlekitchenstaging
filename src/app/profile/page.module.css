@@ -534,19 +534,49 @@
   margin-bottom: 20px;
 }
 .subDay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
-  padding: 5px 11px;
-  border-radius: 100px;
+  padding: 8px 8px;
+  border-radius: 10px;
   border: 1.5px solid rgba(0,0,0,0.1);
   color: rgba(10,10,10,0.3);
   background: #fff;
+  min-width: 48px;
+  text-align: center;
+}
+.subDayName {
+  display: block;
+  font-weight: 700;
+  font-size: 12px;
+}
+.subDayDate {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(10,10,10,0.35);
+}
+.subDayStatus {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(10,10,10,0.25);
 }
 .subDayActive {
   background: #0a0a0a;
   color: #fff39a;
   border-color: #0a0a0a;
+}
+.subDayActive .subDayDate {
+  color: rgba(255,243,154,0.7);
+}
+.subDayActive .subDayStatus {
+  color: rgba(255,243,154,0.8);
+  font-weight: 700;
 }
 
 /* Info grid */
@@ -563,10 +593,15 @@
 .subInfoItem {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   align-items: flex-start;
 }
-.subInfoItem svg { color: rgba(10,10,10,0.35); margin-bottom: 2px; }
+.subInfoLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.subInfoLabelRow svg { color: rgba(10,10,10,0.35); flex-shrink: 0; }
 .subInfoLabel { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: rgba(10,10,10,0.4); text-transform: uppercase; }
 .subInfoVal   { font-size: 13px; font-weight: 600; color: #0a0a0a; }
 

@@ -226,6 +226,27 @@ function SubscriptionsPanel() {
   const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric" }) : "—";
   const paused = sub?.status === "paused";
 
+  const getDayDates = () => {
+    const today = new Date();
+    const currentDay = today.getDay();
+    const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+
+    const dayOffsets = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4 };
+    const dates = {};
+    Object.entries(dayOffsets).forEach(([dayName, offset]) => {
+      const date = new Date(nextMonday);
+      date.setDate(nextMonday.getDate() + offset);
+      const day = date.getDate();
+      const month = date.toLocaleDateString("en-GB", { month: "short" });
+      dates[dayName] = `${day} ${month}`;
+    });
+    return dates;
+  };
+
+  const dayDates = getDayDates();
+
   return (
     <div className={styles.panel}>
       <h2 className={styles.panelHeading}>Plans &amp; Subscriptions</h2>
@@ -259,20 +280,31 @@ function SubscriptionsPanel() {
             </div>
 
             <div className={styles.subDaysRow}>
-              {["Mon","Tue","Wed","Thu","Fri"].map(d => (
-                <span key={d} className={`${styles.subDay} ${(sub.activeDays || []).includes(d) ? styles.subDayActive : ""}`}>{d}</span>
-              ))}
+              {["Mon","Tue","Wed","Thu","Fri"].map(d => {
+                const isActive = (sub.activeDays || []).includes(d);
+                return (
+                  <div key={d} className={`${styles.subDay} ${isActive ? styles.subDayActive : ""}`}>
+                    <span className={styles.subDayName}>{d}</span>
+                    <span className={styles.subDayDate}>{dayDates[d]}</span>
+                    <span className={styles.subDayStatus}>{isActive ? "Active" : "—"}</span>
+                  </div>
+                );
+              })}
             </div>
 
             <div className={styles.subInfoGrid}>
               <div className={styles.subInfoItem}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span className={styles.subInfoLabel}>Next billing</span>
+                <div className={styles.subInfoLabelRow}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span className={styles.subInfoLabel}>Next billing</span>
+                </div>
                 <span className={styles.subInfoVal}>{paused ? "Paused" : fmtDate(sub.nextBilling)}</span>
               </div>
               <div className={styles.subInfoItem}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span className={styles.subInfoLabel}>Member since</span>
+                <div className={styles.subInfoLabelRow}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span className={styles.subInfoLabel}>Member since</span>
+                </div>
                 <span className={styles.subInfoVal}>{fmtDate(sub.startedOn)}</span>
               </div>
             </div>
