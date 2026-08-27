@@ -519,6 +519,7 @@ export default function MenuPage() {
   const [editingPlanDay, setEditingPlanDay] = useState(null);
   const [selectedPlanDay, setSelectedPlanDay] = useState("Mon");
   const [weekly, setWeekly] = useState(false);
+  const [mealPlans, setMealPlans] = useState([]);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedPlan !== "one-time"
     ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(selectedPlanDay)
@@ -553,6 +554,24 @@ export default function MenuPage() {
     } else {
       sessionStorage.removeItem("sk_returning_from_checkout");
     }
+  }, []);
+
+  // Fetch meal plans from API
+  useEffect(() => {
+    api.get("/api/subscriptions/available-plans")
+      .then(data => {
+        if (data.plans && Array.isArray(data.plans)) {
+          setMealPlans(data.plans);
+        }
+      })
+      .catch(() => {
+        // Fallback to default plans if API fails
+        setMealPlans([
+          { type: "one-time", name: "One-Time Order" },
+          { type: "weekly", name: "Weekly Meal Plan" },
+          { type: "one-off", name: "One-Off Alternating Days" },
+        ]);
+      });
   }, []);
 
   // Show loading animation when user switches dates
@@ -1083,9 +1102,11 @@ export default function MenuPage() {
               }}
               className={styles.planDropdown}
             >
-              <option value="one-time">One-Time Order</option>
-              <option value="weekly">Weekly Meal Plan</option>
-              <option value="alternate">One-Off Alternating Days</option>
+              {mealPlans.map(plan => (
+                <option key={plan.type} value={plan.type === "one-off" ? "one-off" : plan.type}>
+                  {plan.name}
+                </option>
+              ))}
             </select>
           </div>
 
