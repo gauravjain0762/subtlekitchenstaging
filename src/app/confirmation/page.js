@@ -27,6 +27,13 @@ function getDayLabel(iso) {
   };
 }
 
+function formatDateShort(iso) {
+  if (!iso) return "—";
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
 export default function ConfirmationPage() {
   return (
     <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
@@ -255,22 +262,14 @@ function ConfirmationPageInner() {
                         <span className={styles.dayDate}>📅</span>
                       </div>
                       <div className={styles.mealInfo}>
-                        <span className={styles.mealName}>{order?.subscription?.meal?.name || "Meal"}</span>
-                        <div className={styles.mealMeta}>
-                          <span>Plan: {order?.subscription?.pattern ? order.subscription.pattern.join(", ") : "Weekly"}</span>
-                          <span className={styles.tag}>· Qty: {order?.subscription?.quantity}</span>
-                        </div>
+                        <span className={styles.mealName}>{order?.subscription?.planName || "Meal Plan"}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className={styles.totalRow} style={{ opacity: 0.65 }}>
-                    <span className={styles.totalLabel}>Delivery days per week</span>
-                    <span className={styles.totalAmt}>{order?.subscription?.pattern?.length || 5}</span>
-                  </div>
                   <div className={styles.totalRow}>
                     <span className={styles.totalLabel}>First charge</span>
-                    <span className={styles.totalAmt}>£{(Number(order?.subscription?.mealPrice) * (order?.subscription?.quantity || 1) * (order?.subscription?.pattern?.length || 5)).toFixed(2)}</span>
+                    <span className={styles.totalAmt}>£{(Number(order?.subscription?.totalCharge) || 0).toFixed(2)}</span>
                   </div>
                   <div className={styles.totalRow} style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid #eee" }}>
                     <span className={styles.totalLabel}>Next billing date</span>
