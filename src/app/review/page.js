@@ -108,7 +108,14 @@ export default function ReviewPage() {
 
   // ── Plan selection ──
   const [selectedPlan, setSelectedPlan] = useState("one-time");
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(() => {
+    const today = new Date();
+    const currentDay = today.getDay();
+    const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+    return nextMonday.toISOString().split('T')[0];
+  });
   const [selectedPattern, setSelectedPattern] = useState("");
   const [deliveryDates, setDeliveryDates] = useState([]);
   const [calculatedCharge, setCalculatedCharge] = useState(0);
@@ -603,17 +610,6 @@ export default function ReviewPage() {
               {/* Subscription Options */}
               {selectedPlan !== "one-time" && (
                 <div className={styles.subscriptionOptions}>
-                  <div className={styles.optionGroup}>
-                    <label className={styles.optionLabel}>Start Date</label>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      disabled={!!order}
-                      className={styles.dateInput}
-                    />
-                  </div>
-
                   {selectedPlan === "one-off" && (
                     <div className={styles.optionGroup}>
                       <label className={styles.optionLabel}>Delivery Pattern</label>
@@ -632,6 +628,11 @@ export default function ReviewPage() {
                     </div>
                   )}
                 </div>
+              )}
+
+              {/* Hidden Start Date - sent to backend but not shown in UI */}
+              {selectedPlan !== "one-time" && !startDate && (
+                <input type="hidden" value={startDate} readOnly />
               )}
 
               {/* Delivery Dates Summary */}
