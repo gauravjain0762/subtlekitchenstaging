@@ -1376,12 +1376,18 @@
   transition: background 0.14s, border-color 0.14s, color 0.14s;
 }
 
-.weekDayChip:hover {
+.weekDayChip:hover:not(.weekDayChipActive) {
   border-color: var(--black);
   background: var(--yellow);
 }
 
 .weekDayChipActive {
+  background: var(--black);
+  border-color: var(--black);
+  color: var(--yellow);
+}
+
+.weekDayChipActive:hover {
   background: var(--black);
   border-color: var(--black);
   color: var(--yellow);

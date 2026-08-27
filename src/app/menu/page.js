@@ -520,6 +520,7 @@ export default function MenuPage() {
   const [selectedPlanDay, setSelectedPlanDay] = useState("Mon");
   const [weekly, setWeekly] = useState(false);
   const [mealPlans, setMealPlans] = useState([]);
+  const [selectedPattern, setSelectedPattern] = useState(null);
   const [selectedDate, setSelectedDate] = useState(() => getAvailableDates()[0]);
   const selectedDay = selectedPlan !== "one-time"
     ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(selectedPlanDay)
@@ -971,14 +972,24 @@ export default function MenuPage() {
   };
 
   const orderItems = selectedPlan !== "one-time"
-    ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, dayIdx) => {
-        const meal = weeklyMeals[day];
-        if (!meal) return null;
-        const di = meal.id;
-        const d = dayIdx;
-        const dish = menuDays[d]?.dishes[di];
-        return dish ? { k: `${d}_${di}`, d, di, dish, portion: weeklyPortions[day], qty: weeklyQtys[day], dishPrice: meal.price, addonPrice: 0, planDay: day } : null;
-      }).filter(Boolean)
+    ? (() => {
+        let daysToInclude = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        // For one-off, only include days from selected pattern
+        if (selectedPlan === "one-off" && selectedPattern) {
+          const currentPlan = mealPlans.find(p => p.type === "one-off");
+          const pattern = currentPlan?.patterns?.find(p => p.id === selectedPattern);
+          daysToInclude = pattern?.days || [];
+        }
+        return daysToInclude.map((day) => {
+          const dayIdx = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(day);
+          const meal = weeklyMeals[day];
+          if (!meal) return null;
+          const di = meal.id;
+          const d = dayIdx;
+          const dish = menuDays[d]?.dishes[di];
+          return dish ? { k: `${d}_${di}`, d, di, dish, portion: weeklyPortions[day], qty: weeklyQtys[day], dishPrice: meal.price, addonPrice: 0, planDay: day } : null;
+        }).filter(Boolean);
+      })()
     : Object.keys(selected).map(k => {
         const [d, di] = k.split("_").map(Number);
         const dish = menuDays[d]?.dishes[di];
@@ -1015,6 +1026,44 @@ export default function MenuPage() {
         {/* Picker row — calendar + time chips */}
         <div className={styles.dayPickerRow}>
 
+          {/* Get patterns for current plan if it's one-off */}
+          {selectedPlan === "one-off" && (() => {
+            const currentPlan = mealPlans.find(p => p.type === "one-off");
+            const patterns = currentPlan?.patterns || [];
+            return (
+              <>
+                {patterns.length > 0 && (
+                  <div className={styles.pickerControlGroup}>
+                    <span className={styles.pickerControlLabel}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      Choose pattern
+                    </span>
+                    <div className={styles.timeChips}>
+                      {patterns.map(pattern => (
+                        <button
+                          key={pattern.id}
+                          type="button"
+                          className={`${styles.timeChip} ${selectedPattern === pattern.id ? styles.timeChipActive : ""}`}
+                          onClick={() => {
+                            setSelectedPattern(pattern.id);
+                            setSelectedPlanDay(pattern.days[0]);
+                            // Reset meals for new pattern
+                            setWeeklyMeals({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
+                            setWeeklyQtys({ Mon: 1, Tue: 1, Wed: 1, Thu: 1, Fri: 1 });
+                            setWeeklyPortions({ Mon: null, Tue: null, Wed: null, Thu: null, Fri: null });
+                            setWeeklyAddons({ Mon: new Set(), Tue: new Set(), Wed: new Set(), Thu: new Set(), Fri: new Set() });
+                          }}
+                        >
+                          {pattern.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+
           {/* Calendar date picker or Day selector for plans */}
           {selectedPlan === "one-time" ? (
             <div className={styles.pickerControlGroup}>
@@ -1035,17 +1084,30 @@ export default function MenuPage() {
                 Choose week days
               </span>
               <div className={styles.weekDayChips}>
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, idx) => {
+                {(() => {
+                  let enabledDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                  // For one-off, only enable days from selected pattern
+                  if (selectedPlan === "one-off" && !selectedPattern) {
+                    enabledDays = [];
+                  } else if (selectedPlan === "one-off" && selectedPattern) {
+                    const currentPlan = mealPlans.find(p => p.type === "one-off");
+                    const pattern = currentPlan?.patterns?.find(p => p.id === selectedPattern);
+                    enabledDays = pattern?.days || [];
+                  }
+
+                  return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day) => {
+                  const isEnabled = enabledDays.includes(day);
                   // Calculate next Monday's date
                   const today = new Date();
-                  const currentDay = today.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+                  const currentDay = today.getDay();
                   const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
                   const nextMonday = new Date(today);
                   nextMonday.setDate(today.getDate() + daysUntilNextMonday);
 
                   // Calculate the date for this specific day of the week
+                  const dayIndex = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(day);
                   const dayDate = new Date(nextMonday);
-                  dayDate.setDate(nextMonday.getDate() + idx);
+                  dayDate.setDate(nextMonday.getDate() + dayIndex);
 
                   // Format as "DD Mon" (e.g., "30 Aug")
                   const options = { day: 'numeric', month: 'short' };
@@ -1055,14 +1117,17 @@ export default function MenuPage() {
                     <button
                       key={day}
                       type="button"
-                      className={`${styles.weekDayChip} ${selectedPlanDay === day ? styles.weekDayChipActive : ""}`}
-                      onClick={() => setSelectedPlanDay(day)}
+                      className={`${styles.weekDayChip} ${selectedPlanDay === day ? styles.weekDayChipActive : ""} ${!isEnabled ? styles.weekDayChipDisabled : ""}`}
+                      onClick={() => isEnabled && setSelectedPlanDay(day)}
+                      disabled={!isEnabled}
+                      style={{ opacity: isEnabled ? 1 : 0.4, cursor: isEnabled ? 'pointer' : 'not-allowed' }}
                     >
                       <div className={styles.weekDayName}>{day}</div>
                       <div className={styles.weekDayDate}>{dateStr}</div>
                     </button>
                   );
-                })}
+                });
+                })()}
               </div>
             </div>
           )}
@@ -1099,11 +1164,13 @@ export default function MenuPage() {
                 const plan = e.target.value;
                 setSelectedPlan(plan);
                 setSelectedPlanDay("Mon");
+                setSelectedPattern(null);
               }}
               className={styles.planDropdown}
             >
-              {mealPlans.map(plan => (
-                <option key={plan.type} value={plan.type === "one-off" ? "one-off" : plan.type}>
+              <option value="one-time">One-Time Order</option>
+              {mealPlans.map((plan, idx) => (
+                <option key={`${plan.type}-${idx}`} value={plan.type === "one-off" ? "one-off" : plan.type}>
                   {plan.name}
                 </option>
               ))}
@@ -1359,13 +1426,53 @@ export default function MenuPage() {
               </div>
 
               <button
-                className={`${styles.reviewBtn} ${(orderItems.length === 0 || (selectedPlan !== "one-time" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day]))) ? styles.reviewBtnDisabled : ""}`}
-                disabled={orderItems.length === 0 || (selectedPlan !== "one-time" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day]))}
+                className={`${styles.reviewBtn} ${(() => {
+                  if (orderItems.length === 0) return styles.reviewBtnDisabled;
+                  if (selectedPlan === "one-time") return "";
+                  if (selectedPlan === "one-off" && !selectedPattern) return styles.reviewBtnDisabled;
+                  if (selectedPlan === "weekly" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day])) return styles.reviewBtnDisabled;
+                  if (selectedPlan === "one-off" && selectedPattern) {
+                    const currentPlan = mealPlans.find(p => p.type === "one-off");
+                    const pattern = currentPlan?.patterns?.find(p => p.id === selectedPattern);
+                    const patternDays = pattern?.days || [];
+                    if (!patternDays.every(day => weeklyMeals[day])) return styles.reviewBtnDisabled;
+                  }
+                  return "";
+                })()}`}
+                disabled={(() => {
+                  if (orderItems.length === 0) return true;
+                  if (selectedPlan === "one-time") return false;
+                  if (selectedPlan === "one-off" && !selectedPattern) return true;
+                  if (selectedPlan === "weekly" && !['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day])) return true;
+                  if (selectedPlan === "one-off" && selectedPattern) {
+                    const currentPlan = mealPlans.find(p => p.type === "one-off");
+                    const pattern = currentPlan?.patterns?.find(p => p.id === selectedPattern);
+                    const patternDays = pattern?.days || [];
+                    if (!patternDays.every(day => weeklyMeals[day])) return true;
+                  }
+                  return false;
+                })()}
                 onClick={() => {
                   if (!orderItems.length) return;
 
+                  // Validate pattern selection for one-off
+                  if (selectedPlan === "one-off") {
+                    if (!selectedPattern) {
+                      alert("Please select a pattern first");
+                      return;
+                    }
+                    const currentPlan = mealPlans.find(p => p.type === "one-off");
+                    const pattern = currentPlan?.patterns?.find(p => p.id === selectedPattern);
+                    const patternDays = pattern?.days || [];
+                    const allDaysSelected = patternDays.every(day => weeklyMeals[day]);
+                    if (!allDaysSelected) {
+                      alert(`Please select meals for all days: ${patternDays.join(", ")}`);
+                      return;
+                    }
+                  }
+
                   // Validate all days are selected for weekly plan
-                  if (selectedPlan !== "one-time") {
+                  if (selectedPlan === "weekly") {
                     const allDaysSelected = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].every(day => weeklyMeals[day]);
                     if (!allDaysSelected) {
                       alert("Please select meals for all weekdays (Mon-Fri)");
@@ -1378,7 +1485,7 @@ export default function MenuPage() {
                   let deliveryDateDisplay = "";
 
                   if (selectedPlan !== "one-time") {
-                    // For weekly plans, use Monday's date
+                    // For weekly/one-off plans, use Monday's date
                     const today = new Date();
                     const currentDay = today.getDay();
                     const daysUntilNextMonday = currentDay === 0 ? 1 : currentDay === 1 ? 7 : (8 - currentDay);
