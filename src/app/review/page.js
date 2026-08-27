@@ -506,6 +506,7 @@ export default function ReviewPage() {
             )}
 
             {/* Promo */}
+            {items.length > 0 && (
             <div
               className={`${styles.promoTrigger} ${items.length === 0 ? styles.promoTriggerDisabled : ""}`}
               role="button"
@@ -521,6 +522,7 @@ export default function ReviewPage() {
                 ? <button className={styles.promoRemoveBtn} onClick={e => { e.stopPropagation(); setPromoApplied(false); setPromo(""); setPromoDiscount(null); }}>Remove</button>
                 : <span className={styles.promoTriggerArrow}>›</span>}
             </div>
+            )}
 
             {promoOpen && (
               <div className={styles.promoOverlay} onClick={() => setPromoOpen(false)}>
@@ -600,6 +602,7 @@ export default function ReviewPage() {
             )}
 
             {/* Plan Selection */}
+            {items.length > 0 && (
             <div className={styles.planSection}>
               <h3 className={styles.planSectionTitle}>Deliver as recurring meal plan? (optional)</h3>
               <div className={styles.plansGrid}>
@@ -675,11 +678,13 @@ export default function ReviewPage() {
                 <p className={styles.planLoading}>Calculating delivery dates...</p>
               )}
             </div>
+            )}
 
             {submitError && (
               <p style={{ color: "#c0392b", fontSize: 13, marginBottom: 12 }}>{submitError}</p>
             )}
 
+            {items.length > 0 && (
             <div className={styles.ctaWrap}>
               <button
                 className={styles.checkoutBtn}
@@ -692,6 +697,7 @@ export default function ReviewPage() {
                 <span className={styles.checkoutBtnPrice}>£{total.toFixed(2)}</span>
               </button>
             </div>
+            )}
 
           </div>
         </div>
