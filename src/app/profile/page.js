@@ -198,6 +198,22 @@ function SubscriptionsPanel() {
     }
   };
 
+  const handleCancelPlan = async () => {
+    if (!sub) return;
+    if (!confirm("Are you sure? This will cancel your subscription.")) return;
+
+    setActionLoading(true);
+    try {
+      await api.delete("/api/subscriptions/my");
+      setSub(null);
+      setError("");
+    } catch (err) {
+      setError(err.error || "Failed to cancel subscription.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric" }) : "—";
   const paused = sub?.status === "paused";
 
@@ -253,7 +269,13 @@ function SubscriptionsPanel() {
             </div>
 
             <div className={styles.subActions}>
-              <button className={styles.subActionCancel}>Cancel plan</button>
+              <button
+                className={styles.subActionCancel}
+                onClick={handleCancelPlan}
+                disabled={actionLoading}
+              >
+                {actionLoading ? "Cancelling…" : "Cancel plan"}
+              </button>
             </div>
           </div>
         </>
