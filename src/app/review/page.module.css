@@ -624,15 +624,10 @@
   gap: 8px;
 }
 
-.planCard:hover {
-  border-color: #0a0a0a;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
 .planCardSelected {
-  border-color: #fff39a;
+  border-color: #0a0a0a;
   background: #fffef5;
-  box-shadow: 0 4px 16px rgba(255,243,154,0.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
 
 .planRadio {
