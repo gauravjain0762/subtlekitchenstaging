@@ -388,6 +388,7 @@ export default function ReviewPage() {
       <div className={styles.twoCol}>
 
         {/* ── Left: delivery info ── */}
+        {items.length > 0 && (
         <div className={styles.addrPanel}>
           <div className={styles.deliveryInfo}>
             <p className={styles.sectionTitle} style={{ marginTop: 0 }}>Delivery address</p>
@@ -423,6 +424,7 @@ export default function ReviewPage() {
             </div>
           </div>
         </div>
+        )}
 
         {/* ── Right: review order ── */}
         <div className={styles.main}>
