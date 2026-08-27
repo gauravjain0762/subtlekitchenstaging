@@ -173,13 +173,14 @@ export default function ReviewPage() {
     setSelectPlanLoading(true);
     setSelectPlanError("");
 
+    // TODO: Backend needs to be updated to accept items array
+    // For now, send first item to match current backend format
+    const firstItem = items[0];
     api.post("/api/subscriptions/select-plan", {
       planId: planId,
-      items: items.map(item => ({
-        mealId: item.dishId,
-        mealPrice: item.price,
-        quantity: item.qty || 1,
-      })),
+      mealId: firstItem.dishId,
+      mealPrice: firstItem.price,
+      quantity: firstItem.qty || 1,
       startDate: startDate,
       ...(selectedPlan === "one-off" && { patternId: selectedPattern }),
     })
@@ -576,24 +577,43 @@ export default function ReviewPage() {
               </div>
             )}
 
-            {/* Plan Selection - Toggle for Recurring */}
+            {/* Plan Selection */}
             <div className={styles.planSection}>
-              <div className={styles.recurringToggleGroup}>
-                <h3 className={styles.planSectionTitle}>Deliver as recurring meal plan?</h3>
-                <label className={styles.toggleSwitch}>
-                  <input
-                    type="checkbox"
-                    checked={selectedPlan !== "one-time"}
-                    onChange={(e) => setSelectedPlan(e.target.checked ? "weekly" : "one-time")}
-                    disabled={!!order}
-                  />
-                  <span className={styles.toggleSlider} />
-                </label>
+              <h3 className={styles.planSectionTitle}>Deliver as recurring meal plan? (optional)</h3>
+              <div className={styles.plansGrid}>
+                {Object.entries(plans).map(([key, plan]) => (
+                  <label key={key} className={`${styles.planCard} ${selectedPlan === key ? styles.planCardSelected : ""} ${order ? styles.planCardDisabled : ""}`}>
+                    <input
+                      type="radio"
+                      name="plan"
+                      value={key}
+                      checked={selectedPlan === key}
+                      onChange={() => setSelectedPlan(key)}
+                      disabled={!!order}
+                      className={styles.planRadio}
+                    />
+                    <div className={styles.planCardContent}>
+                      <p className={styles.planCardName}>{plan.name}</p>
+                      <p className={styles.planCardDescription}>{plan.description}</p>
+                    </div>
+                  </label>
+                ))}
               </div>
 
               {/* Subscription Options */}
               {selectedPlan !== "one-time" && (
                 <div className={styles.subscriptionOptions}>
+                  <div className={styles.optionGroup}>
+                    <label className={styles.optionLabel}>Start Date</label>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      disabled={!!order}
+                      className={styles.dateInput}
+                    />
+                  </div>
+
                   {selectedPlan === "one-off" && (
                     <div className={styles.optionGroup}>
                       <label className={styles.optionLabel}>Delivery Pattern</label>
