@@ -107,13 +107,15 @@ function OrdersPanel() {
                   </div>
                   <div className={styles.orderCardInfo}>
                     <div className={styles.orderCardMeta}>
-                      <span className={styles.orderDate}>{formatDate(order.createdAt)}</span>
+                      <span className={styles.orderDate}>
+                        📅 {formatDate(order.deliveryDate || order.createdAt)}
+                      </span>
                       <span className={styles.orderStatusBadge}>
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                       </span>
                     </div>
-                    <p className={styles.orderId}>ORDER #{order.orderRef}</p>
+                    <p className={styles.orderId}>{order.items[0]?.dishName} x{order.items[0]?.qty || 1}</p>
                     <button className={styles.viewDetailsBtn} onClick={() => setExpanded(expanded === i ? null : i)}>
                       {expanded === i ? "Hide details" : "View details"}
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
