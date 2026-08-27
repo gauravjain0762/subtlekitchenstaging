@@ -79,7 +79,10 @@ function OrdersPanel() {
   };
 
   const formatDate = (iso) =>
-    new Date(iso).toLocaleString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric", hour:"numeric", minute:"2-digit", hour12: true });
+    new Date(iso).toLocaleString("en-GB", { weekday:"short", day:"numeric", month:"long", year:"numeric" });
+
+  const formatOrderDate = (iso) =>
+    new Date(iso).toLocaleString("en-GB", { weekday:"short", day:"numeric", month:"short", year:"numeric" });
 
   return (
     <div className={styles.panel}>
@@ -108,11 +111,11 @@ function OrdersPanel() {
                   <div className={styles.orderCardInfo}>
                     <div className={styles.orderCardMeta}>
                       <span className={styles.orderDate}>
-                        📅 {formatDate(order.deliveryDate || order.createdAt)}
+                        📅 {formatOrderDate(order.deliveryDate || order.createdAt)}
                       </span>
                       <span className={styles.orderStatusBadge}>
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        New
                       </span>
                     </div>
                     <p className={styles.orderId}>{order.items[0]?.dishName} x{order.items[0]?.qty || 1}</p>
