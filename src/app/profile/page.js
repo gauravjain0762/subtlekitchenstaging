@@ -209,7 +209,7 @@ function SubscriptionsPanel() {
 
   const handleCancelPlan = async () => {
     if (!sub) return;
-    if (!confirm("Are you sure? This will cancel your subscription.")) return;
+    if (!confirm("Are you sure? This will cancel your subscription.\n\nNote: The amount will not be refundable.")) return;
 
     setActionLoading(true);
     try {
@@ -279,17 +279,19 @@ function SubscriptionsPanel() {
               </div>
             </div>
 
-            <div className={styles.subDaysRow}>
-              {["Mon","Tue","Wed","Thu","Fri"].map(d => {
-                const isActive = (sub.activeDays || []).includes(d);
-                return (
-                  <div key={d} className={`${styles.subDay} ${isActive ? styles.subDayActive : ""}`}>
-                    <span className={styles.subDayName}>{d}</span>
-                    <span className={styles.subDayDate}>{dayDates[d]}</span>
-                    <span className={styles.subDayStatus}>{isActive ? "Active" : "—"}</span>
-                  </div>
-                );
-              })}
+            <div>
+              <p className={styles.subDaysLabel}>Active week</p>
+              <div className={styles.subDaysRow}>
+                {["Mon","Tue","Wed","Thu","Fri"].map(d => {
+                  const isActive = (sub.activeDays || []).includes(d);
+                  return (
+                    <div key={d} className={`${styles.subDay} ${isActive ? styles.subDayActive : ""}`}>
+                      <span className={styles.subDayName}>{d}</span>
+                      <span className={styles.subDayDate}>{dayDates[d]}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
             <div className={styles.subInfoGrid}>

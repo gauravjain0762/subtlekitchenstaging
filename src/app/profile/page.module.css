@@ -528,6 +528,14 @@
 .subPricePerMeal{ font-size: 12px; font-weight: 500; color: rgba(10,10,10,0.35); }
 
 /* Day pills */
+.subDaysLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(10,10,10,0.4);
+  text-transform: uppercase;
+  margin: 0 0 8px 0;
+}
 .subDaysRow {
   display: flex;
   gap: 8px;
@@ -561,10 +569,7 @@
   color: rgba(10,10,10,0.35);
 }
 .subDayStatus {
-  display: block;
-  font-size: 9px;
-  font-weight: 600;
-  color: rgba(10,10,10,0.25);
+  display: none;
 }
 .subDayActive {
   background: #0a0a0a;
@@ -573,10 +578,6 @@
 }
 .subDayActive .subDayDate {
   color: rgba(255,243,154,0.7);
-}
-.subDayActive .subDayStatus {
-  color: rgba(255,243,154,0.8);
-  font-weight: 700;
 }
 
 /* Info grid */
