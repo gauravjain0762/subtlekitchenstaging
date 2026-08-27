@@ -118,7 +118,8 @@ function OrdersPanel() {
                         New
                       </span>
                     </div>
-                    <p className={styles.orderId}>{order.items[0]?.dishName} x{order.items[0]?.qty || 1}</p>
+                    <p className={styles.orderId}>ORDER #{order.orderRef}</p>
+                    <p style={{ fontSize: 13, marginTop: 2, opacity: 0.8 }}>{order.items[0]?.dishName} x{order.items[0]?.qty || 1}</p>
                     <button className={styles.viewDetailsBtn} onClick={() => setExpanded(expanded === i ? null : i)}>
                       {expanded === i ? "Hide details" : "View details"}
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
