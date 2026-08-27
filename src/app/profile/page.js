@@ -220,8 +220,7 @@ function SubscriptionsPanel() {
             <div className={styles.subCardHeader}>
               <div className={styles.subCardTitleRow}>
                 <div>
-                  <span className={styles.subCardName}>{sub.mealName || "Meal"}</span>
-                  <span className={styles.subCardPlan}>{sub.planName}</span>
+                  <h3 className={styles.subCardPlan}>{sub.planName}</h3>
                 </div>
                 <span className={`${styles.subStatusBadge} ${paused ? styles.subStatusPaused : styles.subStatusActive}`}>
                   {paused ? (
@@ -232,13 +231,6 @@ function SubscriptionsPanel() {
                   {paused ? "Paused" : "Active"}
                 </span>
               </div>
-              {sub.mealPrice && (
-                <div className={styles.subCardPrice}>
-                  <span className={styles.subPriceAmount}>£{(sub.mealPrice * sub.quantity * (sub.activeDays?.length || 5)).toFixed(2)}</span>
-                  <span className={styles.subPricePer}> / week</span>
-                  {sub.mealPrice && <span className={styles.subPricePerMeal}> · £{sub.mealPrice.toFixed(2)} per meal</span>}
-                </div>
-              )}
             </div>
 
             <div className={styles.subDaysRow}>
@@ -248,11 +240,6 @@ function SubscriptionsPanel() {
             </div>
 
             <div className={styles.subInfoGrid}>
-              <div className={styles.subInfoItem}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                <span className={styles.subInfoLabel}>Next delivery</span>
-                <span className={styles.subInfoVal}>{paused ? "—" : fmtDate(sub.nextDelivery)}</span>
-              </div>
               <div className={styles.subInfoItem}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 <span className={styles.subInfoLabel}>Next billing</span>
@@ -266,17 +253,6 @@ function SubscriptionsPanel() {
             </div>
 
             <div className={styles.subActions}>
-              <button className={styles.subActionPause} onClick={handlePauseResume} disabled={actionLoading}>
-                {paused ? (
-                  <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>{actionLoading ? " Updating…" : " Resume plan"}</>
-                ) : (
-                  <><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>{actionLoading ? " Updating…" : " Pause plan"}</>
-                )}
-              </button>
-              <Link href="/menu" className={styles.subActionManage}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                Manage meals
-              </Link>
               <button className={styles.subActionCancel}>Cancel plan</button>
             </div>
           </div>
