@@ -180,14 +180,13 @@ export default function ReviewPage() {
     setSelectPlanLoading(true);
     setSelectPlanError("");
 
-    // TODO: Backend needs to be updated to accept items array
-    // For now, send first item to match current backend format
-    const firstItem = items[0];
     api.post("/api/subscriptions/select-plan", {
       planId: planId,
-      mealId: firstItem.dishId,
-      mealPrice: firstItem.price,
-      quantity: firstItem.qty || 1,
+      items: items.map(item => ({
+        mealId: item.dishId,
+        mealPrice: item.price,
+        quantity: item.qty || 1,
+      })),
       startDate: startDate,
       ...(selectedPlan === "one-off" && { patternId: selectedPattern }),
     })
